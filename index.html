@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Weekly Ledger — Meal Planning Worksheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c1b17;
+    --paper:#efe9dc;
+    --paper-dim:#e3dcc8;
+    --line:#c7bba0;
+    --green:#2f6f4e;
+    --green-deep:#234f38;
+    --red:#b23a2e;
+    --mustard:#c98a1f;
+    --gray:#6b6356;
+    --radius:3px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .sheet{
+    max-width:920px;
+    margin:0 auto;
+    background:var(--paper);
+    min-height:100vh;
+    box-shadow:0 0 80px rgba(0,0,0,.5);
+  }
+  /* ---------- header ---------- */
+  .hero{
+    padding:64px 48px 40px;
+    border-bottom:2px solid var(--ink);
+    position:relative;
+  }
+  .eyebrow{
+    font-family:'Space Mono',monospace;
+    font-size:12px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--green-deep);
+    margin:0 0 14px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:18px;height:2px;background:var(--green-deep);display:inline-block;
+  }
+  .hero h1{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(38px,6vw,62px);
+    line-height:1.02;
+    margin:0 0 16px;
+    letter-spacing:-.01em;
+  }
+  .hero p{
+    font-size:16px;
+    line-height:1.55;
+    color:var(--gray);
+    max-width:480px;
+    margin:0;
+  }
+  .hero-mark{
+    position:absolute;
+    right:48px;
+    top:60px;
+    font-family:'Space Mono',monospace;
+    font-size:12px;
+    color:var(--line);
+    text-align:right;
+    line-height:1.6;
+  }
+  @media (max-width:640px){ .hero-mark{display:none;} }
+
+  /* ---------- generic section ---------- */
+  .step{
+    padding:48px 48px 56px;
+    border-bottom:2px solid var(--ink);
+  }
+  .step:last-child{border-bottom:none;}
+  .step-head{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    margin-bottom:28px;
+  }
+  .step-num{
+    font-family:'Space Mono',monospace;
+    font-size:13px;
+    color:var(--paper);
+    background:var(--ink);
+    padding:3px 8px;
+    border-radius:2px;
+  }
+  .step-title{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:26px;
+    margin:0;
+  }
+  .step-sub{
+    font-size:13.5px;
+    color:var(--gray);
+    margin:6px 0 0 0;
+  }
+
+  /* ---------- controls ---------- */
+  .controls-grid{
+    display:grid;
+    grid-template-columns:1.3fr 1fr;
+    gap:32px;
+  }
+  @media (max-width:720px){ .controls-grid{grid-template-columns:1fr;} }
+  .control-block{ margin-bottom:26px; }
+  .control-label{
+    font-family:'Space Mono',monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:var(--gray);
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:10px;
+  }
+  .control-label b{ color:var(--ink); font-weight:700; }
+  input[type=range]{
+    width:100%;
+    -webkit-appearance:none;
+    height:3px;
+    background:var(--line);
+    border-radius:2px;
+    outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:18px;height:18px;
+    border-radius:50%;
+    background:var(--green);
+    border:3px solid var(--paper);
+    box-shadow:0 0 0 1px var(--green);
+    cursor:pointer;
+    margin-top:-1px;
+  }
+  input[type=range]::-moz-range-thumb{
+    width:18px;height:18px;border-radius:50%;background:var(--green);
+    border:3px solid var(--paper); box-shadow:0 0 0 1px var(--green); cursor:pointer;
+  }
+  .pill-row{ display:flex; gap:8px; flex-wrap:wrap; }
+  .pill{
+    font-family:'Space Mono',monospace;
+    font-size:12.5px;
+    padding:8px 14px;
+    border:1.5px solid var(--ink);
+    border-radius:20px;
+    background:transparent;
+    cursor:pointer;
+    color:var(--ink);
+    transition:.15s;
+  }
+  .pill:hover{ background:rgba(0,0,0,.05); }
+  .pill.active{ background:var(--ink); color:var(--paper); }
+  .stepper{ display:flex; align-items:center; gap:14px; }
+  .stepper button{
+    width:30px;height:30px;
+    border:1.5px solid var(--ink);
+    background:var(--paper);
+    border-radius:50%;
+    font-size:16px;
+    cursor:pointer;
+    line-height:1;
+    color:var(--ink);
+  }
+  .stepper button:hover{ background:var(--ink); color:var(--paper); }
+  .stepper span{
+    font-family:'Space Mono',monospace;
+    font-size:16px;
+    min-width:24px;
+    text-align:center;
+  }
+  select.diet-select{
+    width:100%;
+    font-family:'Inter',sans-serif;
+    font-size:14.5px;
+    padding:11px 12px;
+    border:1.5px solid var(--ink);
+    border-radius:var(--radius);
+    background:var(--paper);
+    color:var(--ink);
+  }
+  .check-row{ display:flex; gap:18px; flex-wrap:wrap; }
+  .check-item{
+    display:flex; align-items:center; gap:8px;
+    font-size:14.5px;
+    cursor:pointer;
+    user-select:none;
+  }
+  .check-item input{
+    width:17px;height:17px;
+    accent-color:var(--green);
+    cursor:pointer;
+  }
+  .build-btn{
+    margin-top:8px;
+    font-family:'Space Mono',monospace;
+    font-size:13.5px;
+    letter-spacing:.04em;
+    padding:14px 26px;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    border-radius:var(--radius);
+    cursor:pointer;
+    text-transform:uppercase;
+    transition:.15s;
+  }
+  .build-btn:hover{ background:var(--green-deep); }
+  .hint-note{
+    font-size:12.5px;
+    color:var(--gray);
+    margin-top:14px;
+    line-height:1.5;
+  }
+
+  /* ---------- weekly board ---------- */
+  .empty-note{
+    font-size:14px;
+    color:var(--gray);
+    border:1.5px dashed var(--line);
+    border-radius:var(--radius);
+    padding:22px;
+    text-align:center;
+  }
+  .week-grid{
+    display:grid;
+    gap:10px;
+  }
+  .day-row{
+    display:grid;
+    grid-template-columns:90px repeat(3,1fr);
+    gap:10px;
+    align-items:stretch;
+  }
+  .day-row.cols-1{ grid-template-columns:90px 1fr; }
+  .day-row.cols-2{ grid-template-columns:90px 1fr 1fr; }
+  @media (max-width:640px){
+    .day-row, .day-row.cols-1, .day-row.cols-2{ grid-template-columns:1fr; }
+  }
+  .day-label{
+    font-family:'Space Mono',monospace;
+    font-size:12px;
+    color:var(--gray);
+    display:flex;
+    align-items:center;
+    padding-top:4px;
+  }
+  @media (max-width:640px){
+    .day-label{ padding-top:0; font-size:13px; color:var(--ink); font-weight:700; }
+  }
+  .meal-card{
+    border:1.5px solid var(--ink);
+    border-radius:var(--radius);
+    padding:12px 13px;
+    background:#fff8ea;
+    position:relative;
+    min-height:78px;
+  }
+  .meal-slot-tag{
+    font-family:'Space Mono',monospace;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    color:var(--green-deep);
+  }
+  .meal-name{
+    font-size:14.5px;
+    font-weight:600;
+    margin:4px 0 2px;
+    line-height:1.25;
+  }
+  .meal-diet{
+    font-size:11px;
+    color:var(--gray);
+    text-transform:capitalize;
+  }
+  .shuffle-btn{
+    position:absolute;
+    top:8px; right:8px;
+    width:24px;height:24px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:var(--paper);
+    cursor:pointer;
+    font-size:12px;
+    line-height:1;
+    color:var(--gray);
+  }
+  .shuffle-btn:hover{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
+  .rebuild-row{
+    display:flex; justify-content:flex-end; margin-top:18px;
+  }
+  .ghost-btn{
+    font-family:'Space Mono',monospace;
+    font-size:12.5px;
+    background:none;
+    border:1.5px solid var(--ink);
+    color:var(--ink);
+    padding:9px 16px;
+    border-radius:var(--radius);
+    cursor:pointer;
+  }
+  .ghost-btn:hover{ background:var(--ink); color:var(--paper); }
+
+  /* ---------- receipt ---------- */
+  .receipt-wrap{ display:flex; justify-content:center; }
+  .receipt{
+    width:100%;
+    max-width:480px;
+    background:#fffdf5;
+    border-left:1px solid var(--line);
+    border-right:1px solid var(--line);
+    position:relative;
+    padding:0 26px 22px;
+  }
+  .tear{
+    height:9px;
+    background-image:
+      linear-gradient(135deg, #fffdf5 50%, transparent 50%),
+      linear-gradient(45deg, #fffdf5 50%, transparent 50%);
+    background-size:14px 14px;
+    background-position:0 0,0 0;
+    background-repeat:repeat-x;
+  }
+  .tear.top{ background-color:var(--paper); }
+  .tear.bottom{ background-color:var(--paper); transform:rotate(180deg); }
+  .receipt-head{
+    text-align:center;
+    padding:18px 0 10px;
+    border-bottom:1px dashed var(--line);
+  }
+  .receipt-head .name{
+    font-family:'Space Mono',monospace;
+    font-weight:700;
+    font-size:14px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  .receipt-head .meta{
+    font-size:11px;
+    color:var(--gray);
+    margin-top:4px;
+    font-family:'Space Mono',monospace;
+  }
+  .cat-group{ margin-top:16px; }
+  .cat-title{
+    font-family:'Space Mono',monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:var(--green-deep);
+    margin-bottom:6px;
+  }
+  .grocery-line{
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    padding:7px 0;
+    border-bottom:1px dotted var(--line);
+  }
+  .grocery-line:last-child{ border-bottom:none; }
+  .line-check{
+    margin-top:3px;
+    width:14px;height:14px;
+    accent-color:var(--green);
+    flex-shrink:0;
+  }
+  .line-check:disabled{ opacity:.25; }
+  .line-main{ flex:1; min-width:0; }
+  .line-name{ font-size:13.5px; }
+  .line-sub{
+    font-size:11.5px;
+    color:var(--green-deep);
+    margin-top:2px;
+  }
+  .line-sub.suggested{ color:var(--mustard); font-weight:600; }
+  .line-price{
+    font-family:'Space Mono',monospace;
+    font-size:13px;
+    white-space:nowrap;
+    text-align:right;
+    min-width:54px;
+  }
+  .line-price .was{
+    display:block;
+    text-decoration:line-through;
+    color:var(--gray);
+    font-size:10.5px;
+  }
+  .receipt-total{
+    margin-top:14px;
+    padding-top:12px;
+    border-top:1.5px solid var(--ink);
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    font-family:'Space Mono',monospace;
+  }
+  .receipt-total .label{ font-size:13px; text-transform:uppercase; letter-spacing:.06em; }
+  .receipt-total .amt{ font-size:22px; font-weight:700; }
+  .suggest-row{
+    display:flex; justify-content:center; margin-top:18px;
+  }
+
+  /* ---------- feasibility stamp ---------- */
+  .feas-wrap{
+    display:grid;
+    grid-template-columns:1fr 220px;
+    gap:36px;
+    align-items:center;
+  }
+  @media (max-width:720px){ .feas-wrap{ grid-template-columns:1fr; } }
+  .gauge-block{ }
+  .gauge-track{
+    height:10px;
+    background:var(--paper-dim);
+    border:1.5px solid var(--ink);
+    border-radius:6px;
+    overflow:hidden;
+    position:relative;
+  }
+  .gauge-fill{
+    height:100%;
+    background:var(--green);
+    transition:width .4s ease, background .3s ease;
+  }
+  .gauge-labels{
+    display:flex; justify-content:space-between;
+    font-family:'Space Mono',monospace;
+    font-size:11.5px;
+    color:var(--gray);
+    margin-top:8px;
+  }
+  .feas-msg{
+    margin-top:18px;
+    font-size:14.5px;
+    line-height:1.6;
+  }
+  .feas-msg b{ font-weight:700; }
+  .stamp{
+    width:190px;
+    aspect-ratio:1;
+    border-radius:50%;
+    border:4px double var(--red);
+    color:var(--red);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    font-family:'Space Mono',monospace;
+    font-weight:700;
+    font-size:16px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    transform:rotate(-9deg) scale(1);
+    margin:0 auto;
+    padding:14px;
+    line-height:1.3;
+    transition:color .3s, border-color .3s;
+    animation:stampdown .35s ease-out;
+  }
+  .stamp.green{ color:var(--green-deep); border-color:var(--green-deep); }
+  .stamp.amber{ color:var(--mustard); border-color:var(--mustard); }
+  @keyframes stampdown{
+    0%{ transform:rotate(-9deg) scale(2.4); opacity:0; }
+    70%{ transform:rotate(-9deg) scale(.92); opacity:1; }
+    100%{ transform:rotate(-9deg) scale(1); opacity:1; }
+  }
+  .footer-note{
+    padding:28px 48px 50px;
+    font-size:12px;
+    color:var(--gray);
+    font-family:'Space Mono',monospace;
+    text-align:center;
+  }
+  :focus-visible{ outline:2px solid var(--green-deep); outline-offset:2px; }
+  @media (prefers-reduced-motion:reduce){
+    .stamp{ animation:none; }
+    html{ scroll-behavior:auto; }
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <header class="hero">
+    <p class="eyebrow">Meal planning worksheet</p>
+    <h1>The Weekly<br>Ledger</h1>
+    <p>Set a budget, build the week, and watch the grocery receipt and the feasibility stamp react as you go. Swap ingredients for cheaper alternatives right on the line item — the total updates as you click.</p>
+    <div class="hero-mark">No. 0427<br>EST. THIS WEEK</div>
+  </header>
+
+  <!-- STEP 1 -->
+  <section class="step">
+    <div class="step-head">
+      <span class="step-num">01</span>
+      <div>
+        <h2 class="step-title">Set the budget</h2>
+        <p class="step-sub">Everything downstream — the menu, the receipt, the stamp — follows from what you set here.</p>
+      </div>
+    </div>
+
+    <div class="controls-grid">
+      <div>
+        <div class="control-block">
+          <div class="control-label">Weekly grocery budget <b id="budgetVal">$120</b></div>
+          <input type="range" id="budgetSlider" min="30" max="300" step="5" value="120">
+        </div>
+
+        <div class="control-block">
+          <div class="control-label">Diners at the table</div>
+          <div class="stepper">
+            <button id="dinerMinus" aria-label="Fewer diners">−</button>
+            <span id="dinerVal">2</span>
+            <button id="dinerPlus" aria-label="More diners">+</button>
+          </div>
+        </div>
+
+        <div class="control-block">
+          <div class="control-label">Length of the plan</div>
+          <div class="pill-row" id="dayPills">
+            <button class="pill" data-days="3">3 days</button>
+            <button class="pill active" data-days="5">5 days</button>
+            <button class="pill" data-days="7">7 days</button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="control-block">
+          <div class="control-label">Dietary pattern</div>
+          <select class="diet-select" id="dietSelect">
+            <option value="omnivore">Omnivore — anything goes</option>
+            <option value="vegetarian">Vegetarian</option>
+            <option value="vegan">Vegan</option>
+          </select>
+        </div>
+
+        <div class="control-block">
+          <div class="control-label">Meals to plan for</div>
+          <div class="check-row">
+            <label class="check-item"><input type="checkbox" data-slot="breakfast" checked> Breakfast</label>
+            <label class="check-item"><input type="checkbox" data-slot="lunch" checked> Lunch</label>
+            <label class="check-item"><input type="checkbox" data-slot="dinner" checked> Dinner</label>
+          </div>
+          <p class="hint-note">At least one meal must stay selected.</p>
+        </div>
+      </div>
+    </div>
+
+    <button class="build-btn" id="buildBtn">Build the week →</button>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="step">
+    <div class="step-head">
+      <span class="step-num">02</span>
+      <div>
+        <h2 class="step-title">The week on the board</h2>
+        <p class="step-sub">Don't like a meal? Click the ↻ on its card to swap it for another within your diet.</p>
+      </div>
+    </div>
+    <div id="weekBoard"><div class="empty-note">Set your budget and meals above, then build the week to see it here.</div></div>
+    <div class="rebuild-row" id="rebuildRow" style="display:none;">
+      <button class="ghost-btn" id="rebuildBtn">↻ Rebuild the whole week</button>
+    </div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="step">
+    <div class="step-head">
+      <span class="step-num">03</span>
+      <div>
+        <h2 class="step-title">The grocery receipt</h2>
+        <p class="step-sub">Every ingredient from the week, combined into one list. Check a line's swap to substitute a cheaper item.</p>
+      </div>
+    </div>
+    <div id="receiptArea"><div class="empty-note">Your receipt prints here once the week is built.</div></div>
+  </section>
+
+  <!-- STEP 4 -->
+  <section class="step">
+    <div class="step-head">
+      <span class="step-num">04</span>
+      <div>
+        <h2 class="step-title">The feasibility stamp</h2>
+        <p class="step-sub">A live read on whether this week's plan actually fits the budget you set.</p>
+      </div>
+    </div>
+    <div id="feasArea"><div class="empty-note">Build the week and the stamp will tell you where you stand.</div></div>
+  </section>
+
+  <div class="footer-note">THE WEEKLY LEDGER · A WORKSHEET FOR PLANNING, NOT A GROCERY PRICE GUARANTEE</div>
+</div>
+
+<script>
+/* ============== DATA ============== */
+const DIET_RANK = { vegan:0, vegetarian:1, omnivore:2 };
+const SLOTS = ['breakfast','lunch','dinner'];
+const SLOT_LABEL = { breakfast:'Breakfast', lunch:'Lunch', dinner:'Dinner' };
+const WEEKDAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const CAT_ORDER = ['Produce','Protein','Dairy & Eggs','Bakery','Pantry'];
+
+function ing(name, category, cost, sub){
+  return { name, category, cost, sub: sub || null };
+}
+
+const RECIPES = {
+  breakfast: [
+    { id:'b1', name:'Oats & Banana Bowl', diet:'vegan', ingredients:[
+      ing('Rolled oats','Pantry',0.35),
+      ing('Banana','Produce',0.30),
+      ing('Oat milk','Dairy & Eggs',0.45, {name:'regular milk', delta:-0.20}),
+      ing('Honey','Pantry',0.25, {name:'brown sugar', delta:-0.15}),
+      ing('Peanut butter','Pantry',0.20)
+    ]},
+    { id:'b2', name:'Veggie Scramble', diet:'vegetarian', ingredients:[
+      ing('Eggs (4)','Dairy & Eggs',0.80, {name:'egg whites carton', delta:-0.10}),
+      ing('Spinach','Produce',0.40),
+      ing('Tomato','Produce',0.30),
+      ing('Shredded cheese','Dairy & Eggs',0.50, {name:'skip the cheese', delta:-0.50}),
+      ing('Whole wheat toast','Bakery',0.30)
+    ]},
+    { id:'b3', name:'Greek Yogurt Parfait', diet:'vegetarian', ingredients:[
+      ing('Greek yogurt','Dairy & Eggs',0.90, {name:'plain yogurt', delta:-0.30}),
+      ing('Granola','Pantry',0.45),
+      ing('Mixed berries','Produce',0.80, {name:'frozen berries', delta:-0.30}),
+      ing('Honey','Pantry',0.20)
+    ]},
+    { id:'b4', name:'Avocado Toast', diet:'vegan', ingredients:[
+      ing('Sourdough bread','Bakery',0.40),
+      ing('Avocado','Produce',0.70, {name:'hummus spread', delta:-0.30}),
+      ing('Lemon','Produce',0.15),
+      ing('Chili flakes','Pantry',0.05),
+      ing('Olive oil','Pantry',0.10)
+    ]},
+    { id:'b5', name:'Bacon & Eggs', diet:'omnivore', ingredients:[
+      ing('Eggs (3)','Dairy & Eggs',0.60),
+      ing('Bacon','Protein',1.20, {name:'turkey bacon', delta:-0.20}),
+      ing('Toast','Bakery',0.25),
+      ing('Butter','Dairy & Eggs',0.15)
+    ]},
+    { id:'b6', name:'Smoothie Bowl', diet:'vegan', ingredients:[
+      ing('Frozen mixed berries','Produce',0.70),
+      ing('Banana','Produce',0.30),
+      ing('Oat milk','Dairy & Eggs',0.45, {name:'regular milk', delta:-0.20}),
+      ing('Chia seeds','Pantry',0.30),
+      ing('Granola','Pantry',0.40)
+    ]},
+    { id:'b7', name:'Breakfast Burrito', diet:'omnivore', ingredients:[
+      ing('Flour tortilla','Bakery',0.30),
+      ing('Eggs (2)','Dairy & Eggs',0.40),
+      ing('Black beans','Pantry',0.35, {name:'skip the beans', delta:-0.35}),
+      ing('Shredded cheese','Dairy & Eggs',0.45),
+      ing('Salsa','Pantry',0.25)
+    ]},
+    { id:'b8', name:'Peanut Butter Banana Toast', diet:'vegan', ingredients:[
+      ing('Bread','Bakery',0.25),
+      ing('Peanut butter','Pantry',0.20),
+      ing('Banana','Produce',0.30),
+      ing('Cinnamon','Pantry',0.05)
+    ]},
+    { id:'b9', name:'Cottage Cheese & Fruit', diet:'vegetarian', ingredients:[
+      ing('Cottage cheese','Dairy & Eggs',0.70, {name:'plain yogurt', delta:-0.20}),
+      ing('Pineapple','Produce',0.50, {name:'canned pineapple', delta:-0.20}),
+      ing('Almonds','Pantry',0.35),
+      ing('Honey','Pantry',0.15)
+    ]},
+    { id:'b10', name:'Veggie Breakfast Hash', diet:'vegan', ingredients:[
+      ing('Potatoes','Produce',0.40),
+      ing('Bell pepper','Produce',0.45, {name:'frozen pepper mix', delta:-0.20}),
+      ing('Onion','Produce',0.20),
+      ing('Olive oil','Pantry',0.10),
+      ing('Paprika','Pantry',0.05)
+    ]}
+  ],
+  lunch: [
+    { id:'l1', name:'Chickpea Salad Wrap', diet:'vegan', ingredients:[
+      ing('Chickpeas','Pantry',0.40, {name:'canned chickpeas', delta:-0.10}),
+      ing('Tortilla wrap','Bakery',0.30),
+      ing('Cucumber','Produce',0.30),
+      ing('Tahini dressing','Pantry',0.35),
+      ing('Lettuce','Produce',0.25)
+    ]},
+    { id:'l2', name:'Grilled Chicken Caesar Salad', diet:'omnivore', ingredients:[
+      ing('Chicken breast','Protein',1.80, {name:'canned chicken', delta:-0.50}),
+      ing('Romaine lettuce','Produce',0.50),
+      ing('Parmesan','Dairy & Eggs',0.40),
+      ing('Caesar dressing','Pantry',0.35),
+      ing('Croutons','Bakery',0.25)
+    ]},
+    { id:'l3', name:'Lentil Soup & Bread', diet:'vegan', ingredients:[
+      ing('Lentils','Pantry',0.45),
+      ing('Carrot','Produce',0.25),
+      ing('Celery','Produce',0.20),
+      ing('Vegetable broth','Pantry',0.40, {name:'bouillon cube', delta:-0.20}),
+      ing('Crusty bread','Bakery',0.35)
+    ]},
+    { id:'l4', name:'Turkey & Cheese Sandwich', diet:'omnivore', ingredients:[
+      ing('Sliced turkey','Protein',1.20, {name:'deli ham', delta:-0.20}),
+      ing('Cheddar cheese','Dairy & Eggs',0.45),
+      ing('Bread','Bakery',0.30),
+      ing('Lettuce','Produce',0.15),
+      ing('Mustard','Pantry',0.10)
+    ]},
+    { id:'l5', name:'Veggie Buddha Bowl', diet:'vegan', ingredients:[
+      ing('Quinoa','Pantry',0.55, {name:'brown rice', delta:-0.20}),
+      ing('Roasted sweet potato','Produce',0.45),
+      ing('Chickpeas','Pantry',0.35),
+      ing('Tahini','Pantry',0.30),
+      ing('Kale','Produce',0.40, {name:'spinach', delta:-0.10})
+    ]},
+    { id:'l6', name:'Tuna Salad Sandwich', diet:'omnivore', ingredients:[
+      ing('Canned tuna','Protein',1.00, {name:'canned mackerel', delta:-0.20}),
+      ing('Mayo','Pantry',0.20),
+      ing('Celery','Produce',0.15),
+      ing('Bread','Bakery',0.30),
+      ing('Lettuce','Produce',0.15)
+    ]},
+    { id:'l7', name:'Caprese Sandwich', diet:'vegetarian', ingredients:[
+      ing('Mozzarella','Dairy & Eggs',0.70, {name:'cheddar slices', delta:-0.20}),
+      ing('Tomato','Produce',0.35),
+      ing('Basil','Produce',0.30),
+      ing('Ciabatta bread','Bakery',0.45),
+      ing('Balsamic glaze','Pantry',0.20)
+    ]},
+    { id:'l8', name:'Black Bean Quesadilla', diet:'vegetarian', ingredients:[
+      ing('Black beans','Pantry',0.35),
+      ing('Shredded cheese','Dairy & Eggs',0.50),
+      ing('Tortilla','Bakery',0.30),
+      ing('Salsa','Pantry',0.25),
+      ing('Bell pepper','Produce',0.35)
+    ]},
+    { id:'l9', name:'Falafel Pita', diet:'vegan', ingredients:[
+      ing('Falafel mix','Pantry',0.55, {name:'homemade chickpea patties', delta:-0.15}),
+      ing('Pita bread','Bakery',0.35),
+      ing('Cucumber','Produce',0.25),
+      ing('Tahini sauce','Pantry',0.30),
+      ing('Tomato','Produce',0.25)
+    ]},
+    { id:'l10', name:'Chicken & Rice Bowl', diet:'omnivore', ingredients:[
+      ing('Chicken thigh','Protein',1.50, {name:'chicken drumstick', delta:-0.30}),
+      ing('White rice','Pantry',0.30),
+      ing('Broccoli','Produce',0.45),
+      ing('Soy sauce','Pantry',0.10),
+      ing('Sesame seeds','Pantry',0.10)
+    ]}
+  ],
+  dinner: [
+    { id:'d1', name:'Spaghetti Marinara', diet:'vegetarian', ingredients:[
+      ing('Spaghetti','Pantry',0.50),
+      ing('Marinara sauce','Pantry',0.60, {name:'canned crushed tomatoes + herbs', delta:-0.20}),
+      ing('Garlic','Produce',0.10),
+      ing('Parmesan','Dairy & Eggs',0.40),
+      ing('Basil','Produce',0.20)
+    ]},
+    { id:'d2', name:'Baked Salmon & Vegetables', diet:'omnivore', ingredients:[
+      ing('Salmon fillet','Protein',3.50, {name:'frozen salmon', delta:-0.80}),
+      ing('Asparagus','Produce',0.80, {name:'green beans', delta:-0.30}),
+      ing('Lemon','Produce',0.15),
+      ing('Olive oil','Pantry',0.10),
+      ing('Potatoes','Produce',0.40)
+    ]},
+    { id:'d3', name:'Vegetable Stir Fry with Tofu', diet:'vegan', ingredients:[
+      ing('Tofu','Protein',0.90, {name:'extra vegetables instead', delta:-0.60}),
+      ing('Broccoli','Produce',0.45),
+      ing('Carrot','Produce',0.25),
+      ing('Soy sauce','Pantry',0.10),
+      ing('White rice','Pantry',0.30)
+    ]},
+    { id:'d4', name:'Beef Tacos', diet:'omnivore', ingredients:[
+      ing('Ground beef','Protein',2.20, {name:'ground turkey', delta:-0.40}),
+      ing('Taco shells','Bakery',0.40),
+      ing('Shredded cheese','Dairy & Eggs',0.45),
+      ing('Lettuce','Produce',0.20),
+      ing('Salsa','Pantry',0.25)
+    ]},
+    { id:'d5', name:'Chickpea Curry & Rice', diet:'vegan', ingredients:[
+      ing('Chickpeas','Pantry',0.40),
+      ing('Coconut milk','Pantry',0.55, {name:'light coconut milk', delta:-0.15}),
+      ing('Curry paste','Pantry',0.35),
+      ing('White rice','Pantry',0.30),
+      ing('Spinach','Produce',0.35)
+    ]},
+    { id:'d6', name:'Margherita Pizza', diet:'vegetarian', ingredients:[
+      ing('Pizza dough','Bakery',0.60, {name:'flatbread base', delta:-0.20}),
+      ing('Mozzarella','Dairy & Eggs',0.80),
+      ing('Tomato sauce','Pantry',0.40),
+      ing('Basil','Produce',0.20),
+      ing('Olive oil','Pantry',0.10)
+    ]},
+    { id:'d7', name:'Grilled Chicken & Sweet Potato', diet:'omnivore', ingredients:[
+      ing('Chicken breast','Protein',1.80),
+      ing('Sweet potato','Produce',0.40),
+      ing('Green beans','Produce',0.50, {name:'frozen green beans', delta:-0.20}),
+      ing('Olive oil','Pantry',0.10),
+      ing('Garlic','Produce',0.10)
+    ]},
+    { id:'d8', name:'Mushroom Risotto', diet:'vegetarian', ingredients:[
+      ing('Arborio rice','Pantry',0.65),
+      ing('Mushrooms','Produce',0.70, {name:'canned mushrooms', delta:-0.30}),
+      ing('Parmesan','Dairy & Eggs',0.50),
+      ing('Vegetable broth','Pantry',0.40),
+      ing('Onion','Produce',0.20)
+    ]},
+    { id:'d9', name:'Shrimp Stir Fry', diet:'omnivore', ingredients:[
+      ing('Shrimp','Protein',2.80, {name:'frozen shrimp', delta:-0.60}),
+      ing('Bell pepper','Produce',0.45),
+      ing('Snap peas','Produce',0.50, {name:'frozen peas', delta:-0.20}),
+      ing('Soy sauce','Pantry',0.10),
+      ing('White rice','Pantry',0.30)
+    ]},
+    { id:'d10', name:'Black Bean Enchiladas', diet:'vegetarian', ingredients:[
+      ing('Black beans','Pantry',0.40),
+      ing('Corn tortillas','Bakery',0.40),
+      ing('Enchilada sauce','Pantry',0.45, {name:'salsa instead', delta:-0.15}),
+      ing('Shredded cheese','Dairy & Eggs',0.55),
+      ing('Bell pepper','Produce',0.35)
+    ]}
+  ]
+};
+
+/* ============== STATE ============== */
+const state = {
+  budget: 120,
+  diners: 2,
+  days: 5,
+  diet: 'omnivore',
+  meals: { breakfast:true, lunch:true, dinner:true },
+  plan: [],
+  grocery: []
+};
+
+/* ============== HELPERS ============== */
+function fmt(n){ return '$' + n.toFixed(2); }
+
+function pickRecipe(slot, diet, excludeId){
+  let pool = RECIPES[slot].filter(r => DIET_RANK[r.diet] <= DIET_RANK[diet] && r.id !== excludeId);
+  if(pool.length === 0){
+    pool = RECIPES[slot].filter(r => DIET_RANK[r.diet] <= DIET_RANK[diet]);
+  }
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function generatePlan(){
+  const plan = [];
+  const last = { breakfast:null, lunch:null, dinner:null };
+  const activeSlots = SLOTS.filter(s => state.meals[s]);
+  for(let d = 0; d < state.days; d++){
+    const dayMeals = [];
+    activeSlots.forEach(slot => {
+      const r = pickRecipe(slot, state.diet, last[slot]);
+      last[slot] = r.id;
+      dayMeals.push({ slot, recipe: r });
+    });
+    plan.push({ dayIndex: d, meals: dayMeals });
+  }
+  state.plan = plan;
+}
+
+function reshuffleCell(dayIndex, slot){
+  const day = state.plan[dayIndex];
+  const current = day.meals.find(m => m.slot === slot);
+  const r = pickRecipe(slot, state.diet, current.recipe.id);
+  current.recipe = r;
+  buildGrocery();
+  renderWeek();
+  renderReceipt();
+  renderFeasibility();
+}
+
+function buildGrocery(){
+  const map = {};
+  state.plan.forEach(day => {
+    day.meals.forEach(m => {
+      m.recipe.ingredients.forEach(it => {
+        const key = it.name;
+        if(!map[key]){
+          map[key] = {
+            name: it.name,
+            category: it.category,
+            baseCost: 0,
+            subCost: 0,
+            subLabel: it.sub ? it.sub.name : null,
+            subAvailable: !!it.sub,
+            subApplied: false
+          };
+        }
+        const cost = it.cost * state.diners;
+        map[key].baseCost += cost;
+        map[key].subCost += it.sub ? (it.cost + it.sub.delta) * state.diners : cost;
+      });
+    });
+  });
+  // preserve subApplied toggles across rebuilds where the line still exists
+  const prev = {};
+  state.grocery.forEach(l => prev[l.name] = l.subApplied);
+  const list = Object.values(map);
+  list.forEach(l => { if(prev[l.name]) l.subApplied = true; });
+  list.sort((a,b) => {
+    const ca = CAT_ORDER.indexOf(a.category), cb = CAT_ORDER.indexOf(b.category);
+    if(ca !== cb) return ca - cb;
+    return a.name.localeCompare(b.name);
+  });
+  state.grocery = list;
+}
+
+function lineTotal(l){ return l.subApplied ? l.subCost : l.baseCost; }
+function currentTotal(){ return state.grocery.reduce((s,l) => s + lineTotal(l), 0); }
+function minPossibleTotal(){ return state.grocery.reduce((s,l) => s + Math.min(l.baseCost, l.subCost), 0); }
+function baseTotalNoSubs(){ return state.grocery.reduce((s,l) => s + l.baseCost, 0); }
+
+function suggestedSwapIds(){
+  const candidates = state.grocery
+    .filter(l => l.subAvailable && !l.subApplied && l.subCost < l.baseCost)
+    .sort((a,b) => (b.baseCost - b.subCost) - (a.baseCost - a.subCost));
+  let total = currentTotal();
+  const chosen = [];
+  for(const c of candidates){
+    if(total <= state.budget) break;
+    total -= (c.baseCost - c.subCost);
+    chosen.push(c.name);
+  }
+  return chosen;
+}
+
+/* ============== RENDER: WEEK BOARD ============== */
+function renderWeek(){
+  const board = document.getElementById('weekBoard');
+  const rebuildRow = document.getElementById('rebuildRow');
+  if(state.plan.length === 0){
+    board.innerHTML = '<div class="empty-note">Set your budget and meals above, then build the week to see it here.</div>';
+    rebuildRow.style.display = 'none';
+    return;
+  }
+  rebuildRow.style.display = 'flex';
+  const activeSlots = SLOTS.filter(s => state.meals[s]);
+  const colClass = activeSlots.length === 1 ? 'cols-1' : (activeSlots.length === 2 ? 'cols-2' : '');
+  let html = '<div class="week-grid">';
+  state.plan.forEach(day => {
+    html += `<div class="day-row ${colClass}"><div class="day-label">${WEEKDAYS[day.dayIndex % 7]}</div>`;
+    activeSlots.forEach(slot => {
+      const m = day.meals.find(mm => mm.slot === slot);
+      html += `
+        <div class="meal-card">
+          <button class="shuffle-btn" data-day="${day.dayIndex}" data-slot="${slot}" aria-label="Swap this meal">↻</button>
+          <div class="meal-slot-tag">${SLOT_LABEL[slot]}</div>
+          <div class="meal-name">${m.recipe.name}</div>
+          <div class="meal-diet">${m.recipe.diet}</div>
+        </div>`;
+    });
+    html += '</div>';
+  });
+  html += '</div>';
+  board.innerHTML = html;
+  board.querySelectorAll('.shuffle-btn').forEach(btn => {
+    btn.addEventListener('click', () => reshuffleCell(parseInt(btn.dataset.day), btn.dataset.slot));
+  });
+}
+
+/* ============== RENDER: RECEIPT ============== */
+function renderReceipt(){
+  const area = document.getElementById('receiptArea');
+  if(state.grocery.length === 0){
+    area.innerHTML = '<div class="empty-note">Your receipt prints here once the week is built.</div>';
+    return;
+  }
+  const grouped = {};
+  state.grocery.forEach(l => {
+    grouped[l.category] = grouped[l.category] || [];
+    grouped[l.category].push(l);
+  });
+
+  let html = '<div class="receipt-wrap"><div class="receipt"><div class="tear top"></div>';
+  html += `<div class="receipt-head">
+      <div class="name">Grocery Receipt</div>
+      <div class="meta">${state.days}-DAY PLAN · ${state.diners} DINER${state.diners>1?'S':''} · ${state.diet.toUpperCase()}</div>
+    </div>`;
+
+  CAT_ORDER.forEach(cat => {
+    if(!grouped[cat]) return;
+    html += `<div class="cat-group"><div class="cat-title">${cat}</div>`;
+    grouped[cat].forEach(l => {
+      const disabled = !l.subAvailable;
+      const total = lineTotal(l);
+      const showWas = l.subApplied && l.baseCost !== l.subCost;
+      html += `
+        <div class="grocery-line">
+          <input type="checkbox" class="line-check" data-name="${l.name}" ${l.subApplied?'checked':''} ${disabled?'disabled':''}>
+          <div class="line-main">
+            <div class="line-name">${l.name}</div>
+            ${l.subAvailable ? `<div class="line-sub">${l.subApplied ? 'swapped → ' + l.subLabel : 'swap → ' + l.subLabel}</div>` : ''}
+          </div>
+          <div class="line-price">${showWas ? `<span class="was">${fmt(l.baseCost)}</span>`:''}${fmt(total)}</div>
+        </div>`;
+    });
+    html += '</div>';
+  });
+
+  html += `<div class="receipt-total"><span class="label">Total</span><span class="amt">${fmt(currentTotal())}</span></div>`;
+  html += `<div class="suggest-row"><button class="ghost-btn" id="applySwapsBtn">Apply suggested swaps</button></div>`;
+  html += '<div class="tear bottom"></div></div></div>';
+  area.innerHTML = html;
+
+  area.querySelectorAll('.line-check').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const line = state.grocery.find(l => l.name === cb.dataset.name);
+      line.subApplied = cb.checked;
+      renderReceipt();
+      renderFeasibility();
+    });
+  });
+  const applyBtn = document.getElementById('applySwapsBtn');
+  if(applyBtn){
+    applyBtn.addEventListener('click', () => {
+      const names = suggestedSwapIds();
+      names.forEach(n => {
+        const line = state.grocery.find(l => l.name === n);
+        if(line) line.subApplied = true;
+      });
+      renderReceipt();
+      renderFeasibility();
+    });
+  }
+}
+
+/* ============== RENDER: FEASIBILITY ============== */
+function renderFeasibility(){
+  const area = document.getElementById('feasArea');
+  if(state.grocery.length === 0){
+    area.innerHTML = '<div class="empty-note">Build the week and the stamp will tell you where you stand.</div>';
+    return;
+  }
+  const total = currentTotal();
+  const minTotal = minPossibleTotal();
+  const baseTotal = baseTotalNoSubs();
+  const budget = state.budget;
+  const pct = Math.min(100, (total / budget) * 100);
+
+  let stampClass = '', stampText = '', msg = '', fillColor = 'var(--green)';
+
+  if(baseTotal <= budget){
+    const leftover = budget - total;
+    stampClass = 'green';
+    stampText = total <= budget * 0.9 ? 'Well Under Budget' : 'On Budget';
+    fillColor = 'var(--green)';
+    msg = `This week's plan comes to <b>${fmt(total)}</b> against a <b>${fmt(budget)}</b> budget — <b>${fmt(leftover)}</b> to spare. No swaps needed.`;
+  } else if(minTotal <= budget){
+    stampClass = 'amber';
+    stampText = 'Fits With Swaps';
+    fillColor = 'var(--mustard)';
+    const needed = suggestedSwapIds();
+    const stillOver = total > budget;
+    if(stillOver){
+      msg = `As planned, this week runs <b>${fmt(total)}</b> — over your <b>${fmt(budget)}</b> budget. Swapping <b>${needed.length} item${needed.length===1?'':'s'}</b> (${needed.join(', ')}) brings it back under budget.`;
+    } else {
+      msg = `With the swaps you've applied, this week comes to <b>${fmt(total)}</b> against a <b>${fmt(budget)}</b> budget. It fits.`;
+    }
+  } else {
+    stampClass = '';
+    stampText = 'Over Budget';
+    fillColor = 'var(--red)';
+    const shortfall = minTotal - budget;
+    msg = `Even with every available swap applied, this week's minimum is <b>${fmt(minTotal)}</b> — <b>${fmt(shortfall)}</b> over your <b>${fmt(budget)}</b> budget. Try fewer diners, fewer days, or raising the budget.`;
+  }
+
+  const html = `
+    <div class="feas-wrap">
+      <div class="gauge-block">
+        <div class="gauge-track"><div class="gauge-fill" style="width:${pct}%; background:${fillColor};"></div></div>
+        <div class="gauge-labels"><span>$0</span><span>Budget: ${fmt(budget)}</span></div>
+        <div class="feas-msg">${msg}</div>
+      </div>
+      <div class="stamp ${stampClass}" id="stampEl">${stampText}</div>
+    </div>`;
+  area.innerHTML = html;
+}
+
+/* ============== WIRE UP CONTROLS ============== */
+const budgetSlider = document.getElementById('budgetSlider');
+const budgetVal = document.getElementById('budgetVal');
+budgetSlider.addEventListener('input', () => {
+  state.budget = parseInt(budgetSlider.value);
+  budgetVal.textContent = '$' + state.budget;
+  renderFeasibility();
+});
+
+document.getElementById('dinerMinus').addEventListener('click', () => {
+  if(state.diners > 1){ state.diners--; document.getElementById('dinerVal').textContent = state.diners; }
+});
+document.getElementById('dinerPlus').addEventListener('click', () => {
+  if(state.diners < 8){ state.diners++; document.getElementById('dinerVal').textContent = state.diners; }
+});
+
+document.getElementById('dayPills').addEventListener('click', (e) => {
+  const btn = e.target.closest('.pill');
+  if(!btn) return;
+  document.querySelectorAll('#dayPills .pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  state.days = parseInt(btn.dataset.days);
+});
+
+document.getElementById('dietSelect').addEventListener('change', (e) => {
+  state.diet = e.target.value;
+});
+
+document.querySelectorAll('[data-slot]').forEach(cb => {
+  cb.addEventListener('change', () => {
+    const checkedCount = Object.values(state.meals).filter(Boolean).length;
+    if(!cb.checked && checkedCount <= 1){
+      cb.checked = true;
+      return;
+    }
+    state.meals[cb.dataset.slot] = cb.checked;
+  });
+});
+
+document.getElementById('buildBtn').addEventListener('click', () => {
+  generatePlan();
+  buildGrocery();
+  renderWeek();
+  renderReceipt();
+  renderFeasibility();
+  document.getElementById('weekBoard').scrollIntoView({ behavior:'smooth', block:'start' });
+});
+
+document.getElementById('rebuildBtn').addEventListener('click', () => {
+  generatePlan();
+  buildGrocery();
+  renderWeek();
+  renderReceipt();
+  renderFeasibility();
+});
+</script>
+</body>
+</html>
